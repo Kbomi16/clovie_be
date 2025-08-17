@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Grade } from '../constants/grade.enum';
 
 @Entity('users')
 export class User {
@@ -14,14 +15,19 @@ export class User {
   @Column({ unique: true })
   email: string;
 
-  @Column()
+  // 기본 조회에서 제외
+  @Column({ select: false })
   password: string;
 
   @Column({ unique: true })
   nickname: string;
 
-  @Column({ default: '새싹' })
-  grade: string;
+  @Column({
+    type: 'enum',
+    enum: Grade,
+    default: Grade.Seedling,
+  })
+  grade: Grade;
 
   @Column({ default: 0 })
   points: number;
