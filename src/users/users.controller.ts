@@ -1,21 +1,32 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  UseGuards,
+  NotFoundException,
+  Req,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { AuthGuard } from '../common/guards/auth.guard';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { LoginUserDto } from './dto/login-user.dto';
+import { User } from './entities/user.entity';
+import { Request } from 'express';
 
-@Controller('auth')
+@Controller('users')
+@UseGuards(AuthGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post('signup')
-  async signup(@Body() dto: CreateUserDto) {
-    const user = await this.usersService.createUser(dto);
-    return { message: '회원가입이 완료되었습니다.', user };
-  }
+  @Get('me')
+  async getMyInfo(@Req() req: Request) {
+    // AuthGuard에서 req.user에 저장한 사용자 정보 가져오기
+    const currentUser = req.user;
+    const user = await this.usersService.findById(currentUser.id);
 
-  @Post('login')
-  async login(@Body() dto: LoginUserDto) {
-    const user = await this.usersService.login(dto);
-    return { message: '로그인에 성공했습니다.', user };
+    if (!user) {
+      throw new NotFoundException('사용자를 찾을 수 없습니다.');
+    }
+
+    const { email, nickname, points, grade } = user;
+    return { email, nickname, points, grade };
   }
 }

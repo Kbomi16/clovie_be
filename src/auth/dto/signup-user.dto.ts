@@ -7,9 +7,9 @@ import {
   IsEnum,
   IsOptional,
 } from 'class-validator';
-import { Grade } from '../constants/grade.enum';
+import { Grade } from '../../users/constants/grade.enum';
 
-export class CreateUserDto {
+export class SignupUserDto {
   @IsEmail()
   @MaxLength(255)
   email: string;
