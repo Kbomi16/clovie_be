@@ -27,6 +27,9 @@ export class UsersController {
     }
 
     const { email, nickname, points, grade } = user;
-    return { email, nickname, points, grade };
+    return {
+      message: '사용자 정보를 불러왔습니다.',
+      user: { email, nickname, points, grade },
+    };
   }
 }
