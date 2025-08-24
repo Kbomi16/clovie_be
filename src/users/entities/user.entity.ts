@@ -4,8 +4,10 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 import { Grade } from '../constants/grade.enum';
+import { Post } from 'src/posts/entities/post.entity';
 
 @Entity('users')
 export class User {
@@ -37,4 +39,10 @@ export class User {
 
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
+
+  @Column({ nullable: true })
+  profileUrl: string;
+
+  @OneToMany(() => Post, (post) => post.author)
+  posts: Post[];
 }
