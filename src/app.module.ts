@@ -2,11 +2,11 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
-import { TokenMiddleware } from './common/middleware/token.middleware';
 import { AuthModule } from './auth/auth.module';
 import { PostsModule } from './posts/posts.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './common/guards/auth.guard';
+import { LoggerMiddleware } from './common/middleware/logger.middleware';
 
 @Module({
   imports: [
@@ -42,6 +42,6 @@ import { AuthGuard } from './common/guards/auth.guard';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(TokenMiddleware).forRoutes('*');
+    consumer.apply(LoggerMiddleware).forRoutes('*');
   }
 }
