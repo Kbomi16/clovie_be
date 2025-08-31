@@ -5,23 +5,26 @@ import {
   NotFoundException,
   Req,
   UnauthorizedException,
+  Put,
+  Body,
 } from '@nestjs/common';
 import { AuthGuard } from '../common/guards/auth.guard';
 import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
 import { Request } from 'express';
 import { SuccessResponse } from 'src/common/dto/response.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get('me')
-  getMe(@Req() req: Request) {
+  get(@Req() req: Request) {
     // req.user는 JwtAuthGuard에서 넣어준 사용자 객체
     const user = req.user;
-    console.log(req.headers);
-    console.log(req.user); // JWT Guard 사용 시 user 객체
+    // console.log(req.headers);
+    // console.log(req.user); // JWT Guard 사용 시 user 객체
 
     return new SuccessResponse('내 정보를 조회합니다.', {
       id: user['id'],
@@ -31,5 +34,11 @@ export class UsersController {
       points: user['points'],
       createdAt: user['createdAt'],
     });
+  }
+
+  @Put('me')
+  async updateMe(@Req() req: Request, @Body() updateUserDto: UpdateUserDto) {
+    const userId = req.user['id'];
+    return await this.usersService.updateMe(userId, updateUserDto);
   }
 }

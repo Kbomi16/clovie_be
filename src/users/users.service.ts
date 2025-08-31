@@ -2,11 +2,14 @@ import {
   ConflictException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { SignupUserDto } from 'src/auth/dto/signup-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { SuccessResponse } from 'src/common/dto/response.dto';
 
 @Injectable()
 export class UsersService {
@@ -58,6 +61,26 @@ export class UsersService {
   async findById(id: string) {
     return this.usersRepository.findOne({
       where: { id },
+    });
+  }
+
+  // ! 내 정보 수정
+  // 닉네임, 프로필 이미지 수정가능
+  async updateMe(id: string, updateUserDto: UpdateUserDto) {
+    const user = await this.usersRepository.findOne({ where: { id } });
+    if (!user) throw new NotFoundException('사용자를 찾을 수 없습니다.');
+
+    Object.assign(user, updateUserDto);
+    await this.usersRepository.save(user);
+
+    return new SuccessResponse('내 정보가 성공적으로 수정되었습니다.', {
+      id: user.id,
+      email: user.email,
+      nickname: user.nickname,
+      profileUrl: user.profileUrl,
+      grade: user.grade,
+      points: user.points,
+      createdAt: user.createdAt,
     });
   }
 }
