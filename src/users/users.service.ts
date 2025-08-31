@@ -15,6 +15,7 @@ export class UsersService {
     private readonly usersRepository: Repository<User>,
   ) {}
 
+  // ! 회원 생성 for 회원가입
   async createUser(user: SignupUserDto) {
     const userEntity = this.usersRepository.create(user);
     try {
@@ -38,12 +39,14 @@ export class UsersService {
     }
   }
 
+  // ! 이메일 or 닉네임으로 회원 조회
   async findByEmailOrNickname(email: string, nickname: string) {
     return this.usersRepository.findOne({
       where: [{ email }, { nickname }],
     });
   }
 
+  // ! 로그인 시 이메일로 회원 조회 (비밀번호 포함)
   async findUserForAuth(email: string) {
     return this.usersRepository.findOne({
       where: { email },
@@ -51,6 +54,7 @@ export class UsersService {
     });
   }
 
+  // ! 회원 아이디로 회원 조회
   async findById(id: string) {
     return this.usersRepository.findOne({
       where: { id },

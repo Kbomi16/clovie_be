@@ -10,26 +10,26 @@ import { AuthGuard } from '../common/guards/auth.guard';
 import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
 import { Request } from 'express';
+import { SuccessResponse } from 'src/common/dto/response.dto';
 
 @Controller('users')
-@UseGuards(AuthGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get('me')
-  async getMyInfo(@Req() req: Request) {
-    // AuthGuard에서 req.user에 저장한 사용자 정보 가져오기
-    const currentUser = req.user;
-    const user = await this.usersService.findById(currentUser.id);
+  getMe(@Req() req: Request) {
+    // req.user는 JwtAuthGuard에서 넣어준 사용자 객체
+    const user = req.user;
+    console.log(req.headers);
+    console.log(req.user); // JWT Guard 사용 시 user 객체
 
-    if (!user) {
-      throw new NotFoundException('사용자를 찾을 수 없습니다.');
-    }
-
-    const { email, nickname, points, grade } = user;
-    return {
-      message: '사용자 정보를 불러왔습니다.',
-      user: { email, nickname, points, grade },
-    };
+    return new SuccessResponse('내 정보를 조회합니다.', {
+      id: user['id'],
+      email: user['email'],
+      nickname: user['nickname'],
+      grade: user['grade'],
+      points: user['points'],
+      createdAt: user['createdAt'],
+    });
   }
 }
