@@ -29,12 +29,13 @@ export class PostsService {
   }
 
   // ! 전체 게시물 조회
-  // TODO: page 방식으로 바꾸기
-  async findAll(offset = 0, limit = 9) {
-    // findAndCount로 데이터 + 전체 개수 동시에 가져오기
+  async findAll(page = 1) {
+    const limit = 9; // 고정
+    const offset = (page - 1) * limit;
+
     const [posts, totalCount] = await this.postsRepository.findAndCount({
-      skip: offset, // offset
-      take: limit, // limit
+      skip: offset,
+      take: limit,
       select: {
         id: true,
         title: true,
@@ -51,11 +52,10 @@ export class PostsService {
       relations: { author: true },
     });
 
-    // SuccessResponse에 페이지네이션 정보 포함
     return new SuccessResponse(
       '전체 게시글을 조회합니다.',
       posts,
-      offset,
+      page,
       limit,
       totalCount,
     );

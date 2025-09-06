@@ -6,6 +6,7 @@ import {
   Param,
   Put,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -20,8 +21,10 @@ export class PostsController {
 
   @Public()
   @Get()
-  findAll() {
-    return this.postsService.findAll();
+  findAll(
+    @Query('page') page: number = 1, // page만 받음
+  ) {
+    return this.postsService.findAll(page);
   }
 
   @Public()

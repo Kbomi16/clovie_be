@@ -2,22 +2,24 @@ export class SuccessResponse<T> {
   message: string;
   data: T;
 
-  // 선택적 페이징 필드
-  offset?: number;
+  page?: number;
   limit?: number;
   totalCount?: number;
+  totalPages?: number;
 
   constructor(
     message: string,
     data: T,
-    offset?: number,
+    page?: number,
     limit?: number,
     totalCount?: number,
   ) {
     this.message = message;
     this.data = data;
-    this.offset = offset;
+    this.page = page;
     this.limit = limit;
     this.totalCount = totalCount;
+    this.totalPages =
+      totalCount && limit ? Math.ceil(totalCount / limit) : undefined;
   }
 }
