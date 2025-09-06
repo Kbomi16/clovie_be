@@ -5,6 +5,7 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { Post } from './entities/post.entity';
 import { User } from 'src/users/entities/user.entity';
 import { SuccessResponse } from 'src/common/dto/response.dto';
+import { UpdatePostDto } from './dto/update-post.dto';
 
 @Injectable()
 export class PostsService {
@@ -28,11 +29,12 @@ export class PostsService {
   }
 
   // ! 전체 게시물 조회
+  // TODO: page 방식으로 바꾸기
   async findAll(offset = 0, limit = 9) {
     // findAndCount로 데이터 + 전체 개수 동시에 가져오기
     const [posts, totalCount] = await this.postsRepository.findAndCount({
-      skip: 0, // offset
-      take: 9, // limit
+      skip: offset, // offset
+      take: limit, // limit
       select: {
         id: true,
         title: true,
@@ -64,12 +66,6 @@ export class PostsService {
     const post = await this.postsRepository.findOne({
       where: { id },
       select: {
-        id: true,
-        title: true,
-        tags: true,
-        content: true,
-        createdAt: true,
-        updatedAt: true,
         author: {
           id: true,
           nickname: true,
@@ -85,9 +81,9 @@ export class PostsService {
   }
 
   // ! 특정 게시물 수정
-  async update(id: number, updatePostDto: CreatePostDto) {
+  async update(dto: UpdatePostDto) {
     // 1. 게시글 조회
-    const post = await this.postsRepository.findOne({ where: { id } });
+    const post = await this.postsRepository.findOne({ where: { id: dto.id } });
     if (!post)
       throw new HttpException(
         '게시글을 찾을 수 없습니다.',
@@ -95,19 +91,12 @@ export class PostsService {
       );
 
     // 2. 수정
-    Object.assign(post, updatePostDto);
-    await this.postsRepository.save(post);
+    await this.postsRepository.save(dto);
 
     // 3. 조회할 때처럼 select + relations 포함
     const updatedPost = await this.postsRepository.findOne({
-      where: { id },
+      where: { id: dto.id },
       select: {
-        id: true,
-        title: true,
-        tags: true,
-        content: true,
-        createdAt: true,
-        updatedAt: true,
         author: {
           id: true,
           nickname: true,

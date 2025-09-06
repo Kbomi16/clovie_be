@@ -12,6 +12,7 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { User } from 'src/common/decorators/user.decorator';
 import { User as UserEntity } from 'src/users/entities/user.entity';
 import { Public } from 'src/common/decorators/public.decorator';
+import { UpdatePostDto } from './dto/update-post.dto';
 
 @Controller('posts')
 export class PostsController {
@@ -35,9 +36,13 @@ export class PostsController {
     return this.postsService.create(createPostDto, user);
   }
 
-  @Put(':id')
-  update(@Param('id') id: string, @Body() updatePostDto: CreatePostDto) {
-    return this.postsService.update(+id, updatePostDto);
+  // @Put(':id')
+  // update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
+  //   return this.postsService.update(+id, updatePostDto);
+  // }
+  @Put()
+  update(@Body() updatePostDto: UpdatePostDto) {
+    return this.postsService.update(updatePostDto);
   }
 
   @Delete(':id')

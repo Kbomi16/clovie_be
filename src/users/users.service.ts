@@ -44,14 +44,14 @@ export class UsersService {
 
   // ! 이메일 or 닉네임으로 회원 조회
   async findByEmailOrNickname(email: string, nickname: string) {
-    return this.usersRepository.findOne({
+    return await this.usersRepository.findOne({
       where: [{ email }, { nickname }],
     });
   }
 
   // ! 로그인 시 이메일로 회원 조회 (비밀번호 포함)
   async findUserForAuth(email: string) {
-    return this.usersRepository.findOne({
+    return await this.usersRepository.findOne({
       where: { email },
       select: ['id', 'email', 'nickname', 'password', 'grade'],
     });
@@ -59,9 +59,15 @@ export class UsersService {
 
   // ! 회원 아이디로 회원 조회
   async findById(id: string) {
-    return this.usersRepository.findOne({
+    const user = await this.usersRepository.findOne({
       where: { id },
     });
+
+    if (!user) {
+      throw new NotFoundException('사용자를 찾을 수 없습니다.');
+    }
+
+    return new SuccessResponse('사용자를 조회합니다.', user);
   }
 
   // ! 내 정보 수정
@@ -83,4 +89,6 @@ export class UsersService {
       createdAt: user.createdAt,
     });
   }
+
+  // ! 회원 탈퇴 (실제 삭제 X, 상태만 INACTIVE로 변경)
 }
