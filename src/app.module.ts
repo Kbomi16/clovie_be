@@ -7,6 +7,7 @@ import { PostsModule } from './posts/posts.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './common/guards/auth.guard';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 @Module({
   imports: [
@@ -27,6 +28,8 @@ import { LoggerMiddleware } from './common/middleware/logger.middleware';
         logging: true,
         charset: 'utf8mb4',
         timezone: 'Z',
+
+        namingStrategy: new SnakeNamingStrategy(),
       }),
     }),
     UsersModule,
